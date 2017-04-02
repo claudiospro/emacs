@@ -18,6 +18,8 @@
 (defvar myPackages '(
 		     web-mode 
 		     php-mode
+		     haml-mode
+		     sass-mode
 		     ))
 
 (mapc #'(lambda (package)

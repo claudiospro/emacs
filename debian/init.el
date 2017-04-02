@@ -51,7 +51,9 @@
 		     ac-php-core ;; dash / f / php-mode  / popup / s / xcscope
 		     company-php ;; ac-php-core / company
 		     auto-complete ;; popup
-		     ac-php ;; ac-php-core / auto-complete / yasnippet		      
+		     ac-php ;; ac-php-core / auto-complete / yasnippet
+		     haml-mode
+		     sass-mode
     ))
 
 (mapc #'(lambda (package)
