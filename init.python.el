@@ -22,6 +22,7 @@
                      ace-window
                      flycheck
                      yasnippet
+                     auto-complete
                      
                      ;; theme
                      moe-theme
@@ -33,7 +34,10 @@
                      sass-mode
                      yaml-mode
                      markdown-mode ;; dependency: cl-lib
+                     js2-mode 
+                     ac-js2 ;; dependency: auto-complete
 
+                     
                      ;; python
                      anaconda-mode
                      ))
@@ -81,6 +85,14 @@
 ;; ---------------------------------- yaml
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+
+;; ---------------------------------- js2-mode
+;; (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js-mode-hook 'js2-minor-mode)
+
+;; ---------------------------------- ac-js2-mode
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+;; (add-hook 'js2-mode-hook 'ac-js2-setup-auto-complete-mode)
 
 ;; ---------------------------------- theme
 ;; (require 'moe-theme)
@@ -190,6 +202,10 @@
 (yas-global-mode 1)
 (yas-reload-all)
 (add-hook 'prog-mode-hook #'yas-minor-mode)
+
+;; auto-complete
+;; --------------------------------------
+(ac-config-default)
 
 ;; anaconda-mode
 ;; --------------------------------------

@@ -1,0 +1,237 @@
+* 1. introduccion
+** instalar sakura
+   - debian
+     aptitude install sakura
+** instalar emacs
+   - debian
+     aptitude install emacs
+   - instalar desde codigo
+     #+BEGIN_SRC
+# apt-get install git-core libxaw7-dev libxpm-dev libpng12-dev libtiff5-dev libgif-dev
+# apt-get install libjpeg8-dev libgtk2.0-dev libncurses5-dev autoconf automake texinfo
+# apt-get build-dep emacs
+$ git clone git://git.savannah.gnu.org/emacs.git
+$ cd emacs/
+$ git checkout emacs-24.4
+$ git checkout -b custom_branch
+$ ./autogen.sh
+$ ./configure --prefix=/opt/emacs24
+$ make --jobs=2
+# make install
+# ln -s /opt/emacs24/bin/emacs /usr/bin/emacs24
+$ emacs24
+     #+END_SRC
+** ¿como usar emacs?
+   - usando
+     - abrir sakura
+     - escribir
+       emacs -nw
+** emacs tutorial
+   - F10
+     - con la flechas mover a help
+     - seleccionamos: emacs tutorial (choose language)
+       intro
+     - seleccionamos: spanish
+     - guardar donde nos quedamos en el manual
+       C-x k
+** probando *scratch*
+   - C-x + b
+     *scratch*
+   - copiar codigo
+     #+BEGIN_SRC
+(message "linux es genial")
+      #+END_SRC
+   - probando codigo
+     C-x C-e
+* 2. archivo configuracion
+  - actualiazar configuración 
+    M-x eval-buffer
+** configurando emacs
+#+BEGIN_SRC elisp
+;;; Sin mensaje de bienvenida:
+(setq inhibit-startup-message t)
+;
+;;; No mostrar la barra del menú:
+(menu-bar-mode -1)
+;
+;;; Reemplazar "yes" y "no" por "y" y "n"
+(fset 'yes-or-no-p 'y-or-n-p)
+;
+;;; Mover a la papelera al borrar archivos y directorios:
+(setq delete-by-moving-to-trash t
+trash-directory "~/.local/share/Trash/files")
+;
+;;; guardar la sessión al cerrar emacs y restaurarla
+;;; al arrancar-la de nuevo. Cero (0) para desactivar:
+(desktop-save-mode 1)
+;
+;;; Para que se muestren todos los buffers abiertos al pulsar C-x b (ido):
+(ido-mode 1)
+;;; Ignorar determinados buffers.
+(setq ido-ignore-buffers '("^ " "*Completions*" "*Shell Command Output*"
+                           "*Messages*" "Async Shell Command" "*scratch*"
+                           "*tramp*"))
+#+END_SRC
+** atajos utiles
+*** movimiento
+    C-a (comienzo de la línea)
+    C-e (final de la línea)
+    
+    M-a (comienzo del parrafo)
+    M-e (final del parrafo)
+    
+    C-f (un carácter hacia adelante)
+    C-b (un carácter hacia atrás)
+    
+    M-f (una palabra hacia delante)
+    M-b (una palabra hacia atrás)
+    
+    C-n (ir a la siguiente línea)
+    C-p (ir a la línea anterior)
+    
+    C-v (Página siguiente)
+    M-v (Página anterior)
+    
+    M-< (Ir al principio del texto)
+    M-> (Ir al final del texto)
+    
+    C-l (La PRIMERA vez que se pulsa, coloca la linea del
+    cursor en el centro, la SEGUNDA arriba y la TERCERA
+    abajo)
+        
+*** otros
+    C-s (buscar siguiente)
+    C-r (buscar anterior)
+    
+    C-<espacio> (Empieza la selección de texto)
+    
+    C-w (cortar)
+    M-w (popiar)
+    
+    c-y (pegar)
+** practicando con loremipsup
+   - instalando
+     apt-get install lorem
+     o
+     aptitude install libtext-lorem-perl
+   - probando 
+     C-u M-! lorem-ipsum-generator -p 20
+     o 
+     C-u M-! lorem -p 20
+* 3. dired - navegador de archivos
+** abriendolo
+   M-x dired
+   C-x d
+** atajos
+   + (Crear directorio)
+   e [enter] (Editar el archivo)
+   g (actualiza la pantalla)
+   q (Regresa al listado)
+   d (Marca un archivo para su eliminación. Coloca una "D" en la 1ª columna)
+   u (Elimina la marca anterior)
+   x (Elimina los archivos marcados con una "D")
+   D (Eliminación inmediata)
+   C (Copiar)
+   4C (Copiar el archivo del cursor y los 4 siguientes)
+   R (Renombrar o mover)
+   Z (Comprimir/descomprimir [compress (.z .Z) y gzip (.gz)])
+   X (Entrar comandos de shell [chmod, grep, find, sort …])
+   S (Crear un enlace simbólico)
+   h (Muestra la ayuda y todos los atajos de teclado)
+   ( (Muestra/esconde detalles de archivos y directorios)
+   & (Con el cursor sobre un archivo, permite entrar una aplicación para abrirla)
+** configurandolo
+#+BEGIN_SRC elisp
+;;; dired
+(defun dired-dotfiles-toggle ()
+ "Mostrar/esconder archivos ocultos"
+ (interactive)
+ (when (equal major-mode 'dired-mode)
+   (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p)
+       (progn
+         (set (make-local-variable 'dired-dotfiles-show-p) nil)
+         (message "h")
+         (dired-mark-files-regexp "^\\\.")
+         (dired-do-kill-lines))
+     (progn (revert-buffer)
+            (set (make-local-variable 'dired-dotfiles-show-p) t)))))
+;;; Atajo para esconder/mostrar archivos ocultos clicando C-c w:
+(global-set-key (kbd "C-c w") 'dired-dotfiles-toggle)
+;
+;
+;;; dired
+(defun external-app ()
+ "Abrir archivo con apps externas."
+ (interactive)
+ (let* ((file (dired-get-filename nil t)))
+   (call-process "xdg-open" nil 0 nil file)))
+;;; Atajo para abrir archivos con apps externas clicando F8.
+(global-set-key (kbd "<f8>") 'external-app)
+#+END_SRC
+
+
+#+BEGIN_SRC elisp
+;;; Eliminar espacios en blanco al final de la linea y al final del texto
+;;; de forma automática al guardar el archivo:
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'write-file-hooks 'delete-trailing-whitespace nil t)
+;
+;;; Añadir un espacio entre el número de linea y el texto de la linea
+;;; al lanzar M-x linum-mode (ver números de linea)
+(setq linum-format "%3d ")
+#+END_SRC
+* 4. Ayudas y colores 
+** hayudas
+   + C-h k     (Muestra información sobre un atajo, p.e. C-c w)
+   + C-h a     (Todas las opciones de un comando, p.e. dired)      
+   + C-h b     (Ver todos los atajos)
+   + C-h w     (Muestra el atajo de la función que queremos)
+   + C-h f     (Información sobre una función)
+   + C-h C RET (Muestra información sobre las codificaciones) RET = RETURN
+   + C-h v     (Muestra información sobre variables p.e. menu-bar-mode)
+   + C-h C-h   (Muestra ayuda de la ayuda)
+   + C-h e     (Muestra los mensajes de log)
+   + M-x info-emacs-manual 
+     (completo manual de emacs)
+   + M-x apropos RET
+     p.e. save;  C-h a, pero además busca opciones de usuario y otras
+     variables 
+** colors
+   - previo
+     mkdir -p .emacs.d/lisp
+     wget http://download.savannah.nongnu.org/releases/color-theme/color-theme-6.6.0.tar.gz
+     tar xf color-theme-6.6.0.tar.gz 
+     mv color-theme-6.6.0 .emacs.d/lisp/
+   - añadir configuracion (.emacs)
+#+BEGIN_SRC elisp
+;;; Tema de colores:
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/color-theme-6.6.0"))
+(require 'color-theme)
+(color-theme-initialize)
+#+END_SRC
+   - reiniciando 
+      M-x eval-buffer
+   - eligiendo el color
+     M-x color-theme-select
+     - probar color
+       i  ó <INTRO>
+     - ver el codigo de el tema 
+       d
+     - por ejemplo: 
+        Charcoal Black, añadiremos la linea (color-theme-charcoal-black)
+** configuraciones de fechas
+   - .emacs
+#+BEGIN_SRC elisp
+;;; Mostrar fecha y hora en formato 24 horas:
+(setq display-time-day-and-date t
+display-time-24hr-format t)
+(display-time)
+;
+;;; Poner en castellano el calendario y que empiece en lunes:
+(setq calendar-week-start-day 1
+calendar-day-name-array ["Lu" "Ma" "Mi" "Ju" "Vi" "Sa" "Do"]
+calendar-month-name-array ["Enero" "Febrero" "Marzo" "Abril" "Mayo" "Junio" "Julio" "Agosto"
+                           "Setiembre" "Octubre" "Noviembre" "Diciembre"])
+#+END_SRC
+   - probando calendario
+      M-x calendar
