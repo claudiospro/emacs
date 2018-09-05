@@ -17,12 +17,13 @@
 		     salt-mode ;; childs: yaml-mode		     
 		     smart-tabs-mode
 		     neotree
-             magit
-             windsize
-             ace-window             
-             flycheck
-             yasnippet
-		     
+         magit
+         windsize
+         ace-window             
+         flycheck
+         yasnippet
+         docker
+         
 		     ;; theme
 		     moe-theme
              material-theme
@@ -33,6 +34,7 @@
 		     sass-mode
 		     yaml-mode
 		     markdown-mode ;; dependency: cl-lib
+         
 		     
 		     
 		     ))

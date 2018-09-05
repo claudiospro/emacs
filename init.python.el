@@ -22,6 +22,7 @@
                      ace-window
                      flycheck
                      yasnippet
+                     docker
                      
                      ;; theme
                      moe-theme

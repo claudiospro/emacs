@@ -5,6 +5,9 @@
 * C-c C-r : Rename
 * C-c C-p : Copy 
 
+# util cuando usas docker o ssh
+M-x neotree-change-root
+
 # teclas
 * n : next line
 * p : previous line
