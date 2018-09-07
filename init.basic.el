@@ -237,7 +237,9 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (moe-theme haml-mode yaml-mode sass-mode php-mode web-mode))))
+    (moe-theme haml-mode yaml-mode sass-mode php-mode web-mode)))
+ '(tramp-copy-size-limit 999999)
+ '(tramp-inline-compress-start-size 999999))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
